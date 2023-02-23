@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npx pretty-quick --staged
+
+# This next line seems a bit scary, but it's just looking for staged git files whose name match one of these:
+# 1. *.env$ (e.g. `.env` or `example.env`)
+# 2. *.env.* (e.g. `.env.sample` or `mainnet.env.sample`)
+# 3. *.cdc$ (e.g. `buy.cdc` or `sell.cdc`)
+for file in `git diff --name-only --cached --diff-filter=ACM | grep '\.env\.\|\.env$\|\.cdc$'` ; do
+    # Adds a line break at the end of every file that doesn't already have one
+    if [ "$(tail -c1 $file)" != '' ] ; then
+        echo "" >> $file
+        git add $file
+    fi
+done
