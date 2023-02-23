@@ -1,0 +1,26 @@
+{
+  "extends": ["eslint:recommended", "plugin:tailwindcss/recommended"],
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "jest/globals": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 13,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": ["local", "tailwindcss"],
+  "rules": {
+    "local/jsx-uses-vars": "error",
+    "no-constant-condition": "off",
+    "no-trailing-spaces": "warn",
+    "no-unused-vars": ["error", { "varsIgnorePattern": "^_$" }],
+    "quotes": ["warn", "single", { "avoidEscape": true }],
+    "semi": ["warn", "never"],
+    "tailwindcss/no-custom-classname": ["warn", { "whitelist": ["fa-.*", "swiper-slide"] }]
+  }
+}
