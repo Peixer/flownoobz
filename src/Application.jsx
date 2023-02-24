@@ -1,12 +1,16 @@
 import Nullstack from 'nullstack'
 
 import './Application.css'
+import { inject } from '@vercel/analytics'
 import Home from './Home'
 
 class Application extends Nullstack {
-
   prepare({ page }) {
     page.locale = 'en-US'
+  }
+
+  async hydrate() {
+    inject()
   }
 
   renderHead() {
@@ -26,7 +30,6 @@ class Application extends Nullstack {
       </body>
     )
   }
-
 }
 
 export default Application
