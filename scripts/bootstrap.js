@@ -3,9 +3,9 @@ import context from '../.production/server.js'
 
 async function run() {
   await context.start()
-  
-  await setPlayers(context)
+
   await setTeams(context)
+  await setPlayers(context)
 }
 
 async function setPlayers({ database }) {
@@ -16,7 +16,10 @@ async function setPlayers({ database }) {
 
   const promises = []
 
-  response.data.league.standard.forEach((standard) => {
+  for (let index = 0; index < response.data.league.standard.length; index++) {
+    const standard = response.data.league.standard[index]
+    const team = await database.collection('teams').findOne({ teamId: standard.teamId })
+
     promises.push(
       database.collection('players').insertOne({
         firstName: standard.firstName,
@@ -26,9 +29,11 @@ async function setPlayers({ database }) {
         dateOfBirthUTC: standard.dateOfBirthUTC,
         teams: standard.teams,
         image: `https://cdn.nba.com/headshots/nba/latest/1040x760/${standard.personId}.png`,
+        team,
       }),
     )
-  })
+  }
+
   console.log("Phew, all setup, now let's just wait for the promises to finish...")
   await Promise.all(promises)
 }
