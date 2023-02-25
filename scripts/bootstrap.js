@@ -4,11 +4,12 @@ import context from '../.production/server.js'
 async function run() {
   await context.start()
 
-  await setTeams(context)
-  await setPlayers(context)
+  await fetchAndStoreTeams(context)
+  await fetchAndStorePlayers(context)
+  await fetchAndStoreTeamsFromNBAGraphQL(context)
 }
 
-async function setPlayers({ database }) {
+async function fetchAndStorePlayers({ database }) {
   const response = await axios({
     method: 'get',
     url: 'http://data.nba.net/prod/v1/2022/players.json ',
@@ -38,7 +39,7 @@ async function setPlayers({ database }) {
   await Promise.all(promises)
 }
 
-async function setTeams({ database }) {
+async function fetchAndStoreTeams({ database }) {
   const response = await axios({
     method: 'get',
     url: 'https://data.nba.net/data/10s/prod/v2/2022/teams.json',
@@ -55,6 +56,35 @@ async function setTeams({ database }) {
         image: `https://cdn.nba.com/logos/nba/${standard.teamId}/global/L/logo.svg`,
       }),
     )
+  })
+
+  console.log("Phew, all setup, now let's just wait for the promises to finish...")
+  await Promise.all(promises)
+}
+
+async function fetchAndStoreTeamsFromNBAGraphQL({ database }) {
+  const response = await axios({
+    method: 'post',
+    url: 'https://public-api.nbatopshot.com/graphql',
+    data: {
+      operationName: 'AllTeams',
+      variables: {},
+      query: `query AllTeams {
+        allTeams {
+            size
+            data {
+                id
+                name
+            }
+        }
+    }`,
+    },
+  })
+
+  const promises = []
+
+  response.data.data.allTeams.data.forEach((team) => {
+    promises.push(database.collection('officialTeams').insertOne(team))
   })
 
   console.log("Phew, all setup, now let's just wait for the promises to finish...")

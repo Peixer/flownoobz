@@ -11,7 +11,8 @@
     "build:nullstack": "npx nullstack build",
     "build:tailwind": "npx tailwindcss -o ./src/tailwind.css",
     "build": "npm run build:tailwind && npm run build:nullstack",
-    "bootstrap": "babel-node scripts/bootstrap"
+    "bootstrap": "babel-node scripts/bootstrap",
+    "loadPlayers": "babel-node scripts/loadPlayers"
   },
   "dependencies": {
     "@analytics/mixpanel": "^0.4.0",
